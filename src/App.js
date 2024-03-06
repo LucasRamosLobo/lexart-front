@@ -1,29 +1,19 @@
-// src/App.js
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import RegistrationPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
 
-function App() {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = await axios.get("/users");
-      setUsers(response.data);
-    }
-
-    fetchData();
-  }, []);
-
+const App = () => {
   return (
-    <div>
-      <h1>Lista de Usuários</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>{user.username}</li>
-        ))}
-      </ul>
-    </div>
+    <Router>
+      <Routes>
+
+        <Route path="/register" element={<RegistrationPage />} />
+        <Route path="/login" element={<LoginPage />} />
+      
+      </Routes>
+    </Router>
   );
-}
+};
 
 export default App;
