@@ -16,7 +16,7 @@ const RegistrationForm = () => {
     e.preventDefault();
     try {
       // Make a POST request to the registration endpoint using fetch
-      const response = await fetch('http://localhost:3000/api/register', {
+      const response = await fetch('lexart-back-ad9e1my9i-lucasramoslobo.vercel.app/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
