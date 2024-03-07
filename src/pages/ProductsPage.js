@@ -12,6 +12,13 @@ const ProductsPage = () => {
   const [edit, setEdit] = useState(false)
   const [productId, setPorductId] = useState()
   const [fetchProductsBoolean, setFetchProductsBoolean] = useState(false);
+  const [newProduct, setNewProduct] = useState({
+    name: '',
+    brand: '',
+    model: '',
+    price: 0,
+    color: '',
+  });
 
 
   const fetchProducts = async () => {
@@ -124,6 +131,65 @@ const ProductsPage = () => {
     setEdit(true);
   };
 
+  const handleFormSubmit = async (e) => {
+    
+    try {
+      const token = localStorage.getItem('token');
+      let response;
+  
+      if (edit) {
+        // Se estiver editando, faz uma requisição PUT para atualizar o produto
+        response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/${productId.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newProduct),
+        });
+        setEdit(false);
+  
+        if (response.ok) {
+          const updatedProduct = await response.json();
+          const updatedProducts = products.map(product =>
+            product.id === updatedProduct.id ? updatedProduct : product
+          );
+          setProducts(updatedProducts);
+          setFilteredProducts(updatedProducts);
+        } else {
+          console.error('Falha ao enviar o formulário do produto:', response.status);
+        }
+      } else {
+        response = await fetch('https://lexart-back-ecru.vercel.app/api/products', {
+          method: 'POST',
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newProduct),
+        });
+      }
+  
+      if (response.ok) {
+        const data = await response.json();
+        handleAddProduct(data);
+  
+        setNewProduct({
+          name: '',
+          brand: '',
+          model: '',
+          price: 0,
+          color: '',
+        });
+        fetchProducts(true);
+      } else {
+        console.error('Falha ao enviar o formulário do produto:', response.status);
+      }
+    } catch (error) {
+      console.error('Erro ao enviar o formulário do produto:', error);
+    }
+  };
+
   return (
     <div>
       <Header />
@@ -142,6 +208,9 @@ const ProductsPage = () => {
             productId={productId}
             setEdit={setEdit}
             fetchProductsFunction={fetchProducts}
+            handleFormSubmit={handleFormSubmit}
+            setNewProduct={setNewProduct}
+            newProduct={newProduct}
 
           />
         )}

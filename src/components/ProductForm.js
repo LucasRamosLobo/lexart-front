@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const ProductForm = ({ onAdd, fetchProducts, Edit, productId, setEdit, fetchProductsFunction }) => {
-  const [newProduct, setNewProduct] = useState({
-    name: '',
-    brand: '',
-    model: '',
-    price: 0,
-    color: '',
-  });
+const ProductForm = ({ setNewProduct, newProduct, Edit, productId, setEdit, handleFormSubmit }) => {
+
 
   // Atualiza os campos do formulário quando o modo de edição é ativado
   useEffect(() => {
@@ -29,69 +23,14 @@ const ProductForm = ({ onAdd, fetchProducts, Edit, productId, setEdit, fetchProd
     setNewProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
   };
 
-  const handleFormSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      let response;
-  
-      if (Edit) {
-        // Se estiver editando, faz uma requisição PUT para atualizar o produto
-        response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/${productId.id}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newProduct),
-        });
-        setEdit(false);
-  
-        if (response.ok) {
-            const data = await response.json();
-            onAdd(data)
-            fetchProducts(true);
-            fetchProductsFunction()
-        } else {
-          console.error('Falha ao enviar o formulário do produto:', response.status);
-        }
-      } else {
-     
-        response = await fetch('https://lexart-back-ecru.vercel.app/api/products', {
-          method: 'POST',
-          headers: {
-            'Authorization': `${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newProduct),
-        });
-      }
-
-      if (response.ok) {
-        const data = await response.json();
-
- 
-          onAdd(data);
-        
-
-        setNewProduct({
-          name: '',
-          brand: '',
-          model: '',
-          price: 0,
-          color: '',
-        });
-        fetchProducts(true);
-      } else {
-        console.error('Falha ao enviar o formulário do produto:', response.status);
-      }
-    } catch (error) {
-      console.error('Erro ao enviar o formulário do produto:', error);
-    }
+    handleFormSubmit(newProduct);
   };
 
+
   return (
-    <form onSubmit={handleFormSubmit} style={styles.productForm}>
+    <form onSubmit={handleSubmit} style={styles.productForm}>
       {/* Campos de entrada para adição/edição */}
       <label style={styles.label}>
         Nome:
