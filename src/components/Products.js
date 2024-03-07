@@ -5,7 +5,7 @@ const Products = ({ products, onDelete, onEdit, stateEdit }) => {
 
   return (
     <div>
-      <h3>Product List:</h3>
+      <h3>Lista:</h3>
       <div style={styles.productContainer}>
         {products.map((product) => (
           <div key={product.id} style={styles.productCard}>
