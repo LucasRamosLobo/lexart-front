@@ -138,7 +138,7 @@ const ProductsPage = () => {
       let response;
   
       if (edit) {
-        // Se estiver editando, faz uma requisição PUT para atualizar o produto
+      
         response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/${productId.id}`, {
           method: 'PUT',
           headers: {

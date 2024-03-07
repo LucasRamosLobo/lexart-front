@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-const ProductForm = ({ setNewProduct, newProduct, Edit, productId, setEdit, handleFormSubmit }) => {
+const ProductForm = ({ setNewProduct, newProduct, Edit, productId, handleFormSubmit }) => {
 
-
-  // Atualiza os campos do formulário quando o modo de edição é ativado
   useEffect(() => {
     if (Edit) {
       setNewProduct(Edit);
@@ -31,7 +29,6 @@ const ProductForm = ({ setNewProduct, newProduct, Edit, productId, setEdit, hand
 
   return (
     <form onSubmit={handleSubmit} style={styles.productForm}>
-      {/* Campos de entrada para adição/edição */}
       <label style={styles.label}>
         Nome:
         <input
