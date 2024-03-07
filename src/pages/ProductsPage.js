@@ -36,7 +36,7 @@ const ProductsPage = () => {
       console.error('Error fetching products:', error);
     }
   };
-  
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -64,12 +64,19 @@ const ProductsPage = () => {
     fetchProducts();
   }, [fetchProductsBoolean]);
 
-  const handleSearch = (term) => {
+  const handleSearch = async (term) => {
     setSearchTerm(term);
-    const filtered = products.filter((product) =>
-      product.name.toLowerCase().includes(term.toLowerCase())
-    );
-    setFilteredProducts(filtered);
+    try {
+      const response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/search?term=${term}`);
+      if (response.ok) {
+        const data = await response.json();
+        setFilteredProducts(data);
+      } else {
+        console.error('Failed to search products:', response.status);
+      }
+    } catch (error) {
+      console.error('Error searching products:', error);
+    }
   };
 
   const handleAddProduct = (newProduct) => {
