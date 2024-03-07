@@ -66,8 +66,14 @@ const ProductsPage = () => {
 
   const handleSearch = async (term) => {
     setSearchTerm(term);
+    const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/search?term=${term}`);
+      const response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/search?term=${term}`, {
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       if (response.ok) {
         const data = await response.json();
         setFilteredProducts(data);
