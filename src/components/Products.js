@@ -1,6 +1,8 @@
 import React from 'react';
 
-const Products = ({ products, onDelete, onEdit }) => {
+const Products = ({ products, onDelete, onEdit, stateEdit }) => {
+
+
   return (
     <div>
       <h3>Product List:</h3>
@@ -20,9 +22,14 @@ const Products = ({ products, onDelete, onEdit }) => {
             <p>
               <strong>Color:</strong> {product.color}
             </p>
-            <button style={styles.deleteButton} onClick={() => onDelete(product.id)}>
-              Delete
-            </button>
+            <div style={styles.buttonContainer}>
+              <button style={styles.deleteButton} onClick={() => onDelete(product.id)}>
+                Delete
+              </button>
+              <button style={styles.editButton} onClick={() => onEdit(product.id, product)}>
+                Edit
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -44,6 +51,11 @@ const styles = {
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
     margin: '10px',
   },
+  buttonContainer: {
+    marginTop: '10px',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   deleteButton: {
     backgroundColor: 'red',
     color: '#fff',
@@ -51,7 +63,14 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    marginTop: '10px',
+  },
+  editButton: {
+    backgroundColor: '#007bff',
+    color: '#fff',
+    padding: '8px',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
   },
 };
 

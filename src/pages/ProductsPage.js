@@ -9,8 +9,34 @@ const ProductsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [edit, setEdit] = useState(false)
+  const [productId, setPorductId] = useState()
   const [fetchProductsBoolean, setFetchProductsBoolean] = useState(false);
 
+
+  const fetchProducts = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('https://lexart-back-ecru.vercel.app/api/products', {
+        headers: {
+          'Authorization': `${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+        setFilteredProducts(data);
+        fetchProductsBoolean(false);
+      } else {
+        console.error('Failed to fetch products:', response.status);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
+  
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -26,7 +52,7 @@ const ProductsPage = () => {
           const data = await response.json();
           setProducts(data);
           setFilteredProducts(data);
-          fetchProductsBoolean(false)
+          fetchProductsBoolean(false);
         } else {
           console.error('Failed to fetch products:', response.status);
         }
@@ -66,7 +92,7 @@ const ProductsPage = () => {
       if (response.ok) {
         setProducts(products.filter((product) => product.id !== productId));
         setFilteredProducts(filteredProducts.filter((product) => product.id !== productId));
-        fetchProductsBoolean(true)
+        fetchProductsBoolean(true);
       } else {
         console.error('Failed to delete product:', response.status);
       }
@@ -75,27 +101,12 @@ const ProductsPage = () => {
     }
   };
 
-  const handleEditProduct = async (productId, updatedProduct) => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/${productId}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedProduct),
-      });
 
-      if (response.ok) {
-        setProducts(products.map((product) => (product.id === productId ? updatedProduct : product)));
-        setFilteredProducts(filteredProducts.map((product) => (product.id === productId ? updatedProduct : product)));
-      } else {
-        console.error('Failed to edit product:', response.status);
-      }
-    } catch (error) {
-      console.error('Error editing product:', error);
-    }
+  const handleEditButtonClick = (productId) => {
+    setShowAddForm(true)
+    const productToEdit = products.find((product) => product.id === productId);
+    setPorductId(productToEdit);
+    setEdit(true);
   };
 
   return (
@@ -108,13 +119,24 @@ const ProductsPage = () => {
           {showAddForm ? 'Cancelar Adição' : 'Adicionar Produto'}
         </button>
 
-        {showAddForm && <ProductForm onAdd={handleAddProduct} fetchProducts={setFetchProductsBoolean} />}
+        {showAddForm && (
+          <ProductForm
+            onAdd={handleAddProduct}
+            fetchProducts={setFetchProductsBoolean}
+            Edit={edit}
+            productId={productId}
+            setEdit={setEdit}
+            fetchProductsFunction={fetchProducts}
+
+          />
+        )}
 
         <Products
           products={filteredProducts}
           onDelete={handleDeleteProduct}
-          onEdit={handleEditProduct}
-        
+          onEdit={handleEditButtonClick}
+          stateEdit={setPorductId}
+          fetchProducts
         />
       </div>
     </div>

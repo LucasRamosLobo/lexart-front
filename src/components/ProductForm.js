@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const ProductForm = ({ onAdd, fetchProducts }) => {
+const ProductForm = ({ onAdd, fetchProducts, Edit, productId, setEdit, fetchProductsFunction }) => {
   const [newProduct, setNewProduct] = useState({
     name: '',
     brand: '',
@@ -9,39 +9,90 @@ const ProductForm = ({ onAdd, fetchProducts }) => {
     color: '',
   });
 
+  // Atualiza os campos do formulário quando o modo de edição é ativado
+  useEffect(() => {
+    if (Edit) {
+      setNewProduct(Edit);
+    } else {
+      setNewProduct({
+        name: '',
+        brand: '',
+        model: '',
+        price: 0,
+        color: '',
+      });
+    }
+  }, [Edit]);
+  console.log(Edit, productId)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prevProduct) => ({ ...prevProduct, [name]: value }));
   };
 
-  const handleAddProduct = async (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://lexart-back-ecru.vercel.app/api/products', {
-        method: 'POST',
-        headers: {
-          'Authorization': `${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newProduct),
-      });
+      let response;
+  
+      if (Edit) {
+        // Se estiver editando, faz uma requisição PUT para atualizar o produto
+        response = await fetch(`https://lexart-back-ecru.vercel.app/api/products/${productId.id}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newProduct),
+        });
+        setEdit(false);
+  
+        if (response.ok) {
+            const data = await response.json();
+            onAdd(data)
+            fetchProducts(true);
+            fetchProductsFunction()
+        } else {
+          console.error('Falha ao enviar o formulário do produto:', response.status);
+        }
+      } else {
+     
+        response = await fetch('https://lexart-back-ecru.vercel.app/api/products', {
+          method: 'POST',
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newProduct),
+        });
+      }
 
       if (response.ok) {
         const data = await response.json();
-        onAdd(data);
-        setNewProduct({ name: '', brand: '', model: '', price: 0, color: '' });
-        fetchProducts(true)
+
+ 
+          onAdd(data);
+        
+
+        setNewProduct({
+          name: '',
+          brand: '',
+          model: '',
+          price: 0,
+          color: '',
+        });
+        fetchProducts(true);
       } else {
-        console.error('Failed to add product:', response.status);
+        console.error('Falha ao enviar o formulário do produto:', response.status);
       }
     } catch (error) {
-      console.error('Error adding product:', error);
+      console.error('Erro ao enviar o formulário do produto:', error);
     }
   };
 
   return (
-    <form onSubmit={handleAddProduct} style={styles.productForm}>
+    <form onSubmit={handleFormSubmit} style={styles.productForm}>
+      {/* Campos de entrada para adição/edição */}
       <label style={styles.label}>
         Nome:
         <input
@@ -93,7 +144,7 @@ const ProductForm = ({ onAdd, fetchProducts }) => {
         />
       </label>
       <button type="submit" style={styles.addButton}>
-        Adicionar
+        {Edit ? 'Atualizar' : 'Adicionar'}
       </button>
     </form>
   );
