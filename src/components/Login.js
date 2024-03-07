@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const LoginForm = () => {
   const [loginData, setLoginData] = useState({
-    email: '',
+    username: '',
     password: '',
   });
 
@@ -15,21 +15,27 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // Make a POST request to the login endpoint
-      const response = await axios.post('/api/login', loginData);
+      const response = await axios.post('https://lexart-back-ecru.vercel.app/api/login', loginData);
+
+      if (response.data.token) {
+   
+        localStorage.setItem('token', response.data.token);
+        console.log('Token saved to localStorage:', response.data.token);
+      }
+
       console.log('Login successful:', response.data);
-      // Handle success, redirect or show a success message
+   
     } catch (error) {
       console.error('Login failed:', error.response.data);
-      // Handle error, show an error message
+     
     }
   };
 
   return (
     <form onSubmit={handleLogin}>
       <label>
-        Email:
-        <input type="email" name="email" value={loginData.email} onChange={handleInputChange} />
+        Username:
+        <input type="text" name="username" value={loginData.username} onChange={handleInputChange} />
       </label>
       <label>
         Password:
