@@ -1,11 +1,12 @@
 // RegistrationPage.js
 import React from 'react';
 import RegistrationForm from '../components/Register';
+import Header from '../components/Header';
 
 const RegistrationPage = () => {
   return (
     <div>
-      <h1>Registration Page</h1>
+      <Header />
       <RegistrationForm />
     </div>
   );

@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const RegistrationForm = () => {
+  const navigate = useNavigate();
+
   const [userData, setUserData] = useState({
     username: '',
     email: '',
     password: '',
   });
+
+  const [error, setError] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -26,18 +31,22 @@ const RegistrationForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Registration successful:', data);
+        navigate('/login');
       } else {
         const errorData = await response.json();
         console.error('Registration failed:', errorData);
+        setError(errorData.error);
       }
     } catch (error) {
       console.error('Registration failed:', error);
+      setError('Erro interno no servidor');
     }
   };
 
   return (
     <div style={styles.cardContainer}>
       <form onSubmit={handleRegistration} style={styles.registrationForm}>
+        <h2 style={styles.title}>Registre-se:</h2>
         <label style={styles.inputLabel}>
           Username:
           <input type="text" name="username" value={userData.username} onChange={handleInputChange} style={styles.inputField} />
@@ -50,7 +59,10 @@ const RegistrationForm = () => {
           Password:
           <input type="password" name="password" value={userData.password} onChange={handleInputChange} style={styles.inputField} />
         </label>
-        <button type="submit" style={styles.submitButton}>Register</button>
+        <button type="submit" style={styles.submitButton}>
+          Register
+        </button>
+        {error && <p style={styles.errorText}>{error}</p>}
       </form>
     </div>
   );
@@ -71,6 +83,11 @@ const styles = {
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
   },
+  title: {
+    color:  '#333',
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
   inputLabel: {
     display: 'block',
     marginBottom: '10px',
@@ -83,12 +100,17 @@ const styles = {
     borderRadius: '4px',
   },
   submitButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: '#333',
     color: '#fff',
     padding: '10px',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
+    width: '100%',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: '10px',
   },
 };
 

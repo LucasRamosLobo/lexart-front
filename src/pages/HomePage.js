@@ -8,7 +8,7 @@ const HomePage = () => {
       <Header />
       <div className="content" style={contentStyle}>
         <h1 style={titleStyle}>PROJETO LEXART</h1>
-        {/* Outro conteúdo da página */}
+    
       </div>
     </div>
   );
