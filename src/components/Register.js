@@ -15,7 +15,7 @@ const RegistrationForm = () => {
   const handleRegistration = async (e) => {
     e.preventDefault();
     try {
-      // Make a POST request to the registration endpoint using fetch
+  
       const response = await fetch('https://lexart-back-ecru.vercel.app/api/register', {
         method: 'POST',
         headers: {
@@ -23,21 +23,29 @@ const RegistrationForm = () => {
         },
         body: JSON.stringify(userData),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
+    
+        if (data.token) {
+      
+          localStorage.setItem('token', data.token);
+          console.log('Token saved to localStorage:', data.token);
+        }
+  
         console.log('Registration successful:', data);
-        // Handle success, redirect or show a success message
+   
       } else {
         const errorData = await response.json();
         console.error('Registration failed:', errorData);
-        // Handle error, show an error message
+   
       }
     } catch (error) {
       console.error('Registration failed:', error);
-      // Handle other errors, show an error message
+    
     }
   };
+  
 
   return (
     <form onSubmit={handleRegistration}>
